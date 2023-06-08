@@ -1,10 +1,12 @@
 import { FilesetResolver, HandLandmarker } from "@mediapipe/tasks-vision";
-import { hasGetUserMedia, getWebcams, changeWebcam } from "./webcam";
+import { hasGetUserMedia, changeNextWebcam } from "./webcam";
 
 // SETUP
 
-let handLandmarker: any;
-let enableWebcamButton: HTMLButtonElement;
+let handLandmarker;
+let enableWebcamButton: HTMLElement;
+let changeNextWebcamButton: HTMLElement;
+
 let webcamRunning: Boolean = false;
 const video = document.getElementById("webcamVideo") as HTMLVideoElement;
 const canvasElement = document.getElementById(
@@ -30,19 +32,24 @@ const createHandLandmarker = async () => {
     runningMode: "VIDEO",
     numHands: 2,
   });
+  return handLandmarker;
 };
 createHandLandmarker();
 
 // APP
 
 if (hasGetUserMedia()) {
-  let enableWebcamButton = document.getElementById("webcamButton");
+  changeNextWebcamButton = document.getElementById("webcamNext");
+  changeNextWebcamButton.addEventListener("click", changeNextWebcam);
+  enableWebcamButton = document.getElementById("webcamEnable");
   enableWebcamButton?.addEventListener("click", enableCam);
 } else {
   console.warn("getUserMedia() is not supported by your browser");
 }
 
-function enableCam(event) {
+async function enableCam(event) {
+  handLandmarker = await createHandLandmarker();
+
   if (!handLandmarker) {
     console.warn("Wait! objectDetector not loaded yet.");
     return;
@@ -50,10 +57,10 @@ function enableCam(event) {
 
   if (webcamRunning === true) {
     webcamRunning = false;
-    enableWebcamButton.innerText = "ENABLE PREDICTIONS";
+    enableWebcamButton.innerText = "Enable";
   } else {
     webcamRunning = true;
-    enableWebcamButton.innerText = "DISABLE PREDICTIONS";
+    enableWebcamButton.innerText = "Disable";
   }
 
   // getUsermedia parameters.
@@ -79,7 +86,7 @@ async function predictWebcam() {
   canvasElement.height = video.videoHeight;
 
   // Now let's start detecting the stream.
-  await handLandmarker?.setOptions({ runningMode: "VIDEO" });
+  //await handLandmarker?.setOptions({ runningMode: "VIDEO" });
 
   let startTimeMs = performance.now();
   if (lastVideoTime !== video.currentTime) {
@@ -89,7 +96,7 @@ async function predictWebcam() {
 
   canvasCtx.save();
   canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-  
+
   if (results.landmarks) {
     for (const landmarks of results.landmarks) {
       drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {

@@ -4,17 +4,6 @@ body {
   font-size: 14px;
   line-height: 20px;
 }
-.canvas {
-  z-index: 1;
-  position: absolute;
-  pointer-events: none;
-}
-
-.outputCanvas {
-  transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg);
-  -moz-transform: rotateY(180deg);
-}
 
 .button {
   max-width: 100px;
@@ -23,13 +12,18 @@ body {
   margin-right: 0;
 }
 
+.button:hover {
+  background-color: rgba(33, 131, 218, .89);
+}
+
 .buttons {
   flex-direction: column;
+  margin-top: 20px;
   display: flex;
 }
 
-.text-block {
-  font-size: 33px;
+.body {
+  background-color: rgba(10, 10, 9, .67);
 }
 
 .container {
@@ -37,7 +31,19 @@ body {
 }
 
 .text-block-2 {
+  color: #fff;
+  font-family: Merriweather, serif;
   font-size: 35px;
+}
+
+.canvaswrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.video, .media-container {
+  position: relative;
 }
 
 @media screen and (max-width: 767px) {
@@ -46,3 +52,5 @@ body {
     margin-right: 15px;
   }
 }
+
+
