@@ -2,7 +2,7 @@
 const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
 
 const changeWebcam = (videoDevices) => {
-  const video = document.querySelector("#webcam");
+  const video = document.querySelector("#webcamVideo");
   let nextDevice;
 
   if (video.srcObject) {
@@ -19,10 +19,10 @@ const changeWebcam = (videoDevices) => {
 
     navigator.mediaDevices
       .getUserMedia(constraints)
-      .then(function(stream) {
+      .then(function (stream) {
         video.srcObject = stream;
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.error("Error switching camera:", error);
       });
   }
@@ -31,16 +31,21 @@ const changeWebcam = (videoDevices) => {
 const getWebcams = async () => {
   return navigator.mediaDevices
     .enumerateDevices()
-    .then(function(devices) {
+    .then(function (devices) {
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
       console.log("Available webcams:", videoDevices);
       return videoDevices;
     })
-    .catch(function(error) {
+    .catch(function (error) {
       console.error("Error enumerating devices:", error);
     });
 };
 
-export { hasGetUserMedia, changeWebcam, getWebcams };
+const changeNextWebcam = async () => {
+  const detectedWebcams = await getWebcams();
+  changeWebcam(detectedWebcams);
+};
+
+export { hasGetUserMedia, changeWebcam, changeNextWebcam, getWebcams };
